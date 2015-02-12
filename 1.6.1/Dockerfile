@@ -1,6 +1,11 @@
 FROM debian:wheezy
 
-MAINTAINER Clemens Stolle klaemo@fastmail.fm
+# Heavily based on the build from Clemens Stolle <klaemo@fastmail.fm>
+# with a custom build of libmozjs with a patch to make it work with
+# a grsecurity kernel. This lets the couchdb pass the installation verification
+# in Futon (/_utils/veriy_install.html).
+
+MAINTAINER Samuel Tardieu <sam@rfc1149.net>
 
 # Install instructions from https://cwiki.apache.org/confluence/display/COUCHDB/Debian
 
@@ -12,7 +17,9 @@ RUN groupadd -r couchdb && useradd -d /var/lib/couchdb -g couchdb couchdb
 RUN apt-get update -y \
   && apt-get install -y --no-install-recommends \
     build-essential ca-certificates curl \
-    libmozjs185-dev libmozjs185-1.0 libnspr4 libnspr4-0d libnspr4-dev libcurl4-openssl-dev libicu-dev \
+    libnspr4 libnspr4-0d libnspr4-dev libcurl4-openssl-dev libicu-dev zip python \
+  && (curl http://tomobox.fr/js185-1.0.0.tar.gz | tar zxf -) \
+  && (cd js-1.8.5 && curl http://tomobox.fr/libmozjs185-grsec.patch | patch -p1 && cd js/src && ./configure --prefix=/usr && make && make install) \
   && curl -ssL https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb -o esl.deb && dpkg -i esl.deb && apt-get update \
   && apt-get install -y --no-install-recommends erlang-nox=1:17.4 erlang-dev=1:17.4 \
   && curl -sSL http://apache.openmirror.de/couchdb/source/$COUCHDB_VERSION/apache-couchdb-$COUCHDB_VERSION.tar.gz -o couchdb.tar.gz \
@@ -24,10 +31,10 @@ RUN apt-get update -y \
   && cd /usr/src/couchdb \
   && ./configure --with-js-lib=/usr/lib --with-js-include=/usr/include/mozjs \
   && make && make install \
-  && apt-get purge -y perl binutils cpp make build-essential libnspr4-dev libcurl4-openssl-dev libicu-dev \
+  && apt-get purge -y perl binutils cpp make build-essential libnspr4-dev libcurl4-openssl-dev libicu-dev python \
   && apt-get autoremove -y \
   && apt-get update && apt-get install -y libicu48 --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/* /usr/src/couchdb /couchdb.tar.gz* /KEYS /esl.deb
+  && rm -rf /var/lib/apt/lists/* /usr/src/couchdb /couchdb.tar.gz* /KEYS /esl.deb /js-1.8.5
 
 # grab gosu for easy step-down from root
 RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
