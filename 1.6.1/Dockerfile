@@ -14,6 +14,7 @@ ENV COUCHDB_VERSION 1.6.1
 RUN groupadd -r couchdb && useradd -d /var/lib/couchdb -g couchdb couchdb
 
 # download dependencies, compile and install couchdb
+ADD 0001-Consume-JSON-body-even-if-ignored.patch /tmp/0001-Consume-JSON-body-even-if-ignored.patch
 RUN apt-get update -y \
   && apt-get install -y --no-install-recommends \
     build-essential ca-certificates curl \
@@ -29,12 +30,13 @@ RUN apt-get update -y \
   && mkdir -p /usr/src/couchdb \
   && tar -xzf couchdb.tar.gz -C /usr/src/couchdb --strip-components=1 \
   && cd /usr/src/couchdb \
+  && patch -p1 < /tmp/0001-Consume-JSON-body-even-if-ignored.patch \
   && ./configure --with-js-lib=/usr/lib --with-js-include=/usr/include/mozjs \
   && make && make install \
   && apt-get purge -y perl binutils cpp make build-essential libnspr4-dev libcurl4-openssl-dev libicu-dev python \
   && apt-get autoremove -y \
   && apt-get update && apt-get install -y libicu48 --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/* /usr/src/couchdb /couchdb.tar.gz* /KEYS /esl.deb /js-1.8.5
+  && rm -rf /var/lib/apt/lists/* /usr/src/couchdb /couchdb.tar.gz* /KEYS /esl.deb /js-1.8.5 /tmp/0001-Consume-JSON-body-even-if-ignored.patch
 
 # grab gosu for easy step-down from root
 RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
