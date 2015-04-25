@@ -22,7 +22,7 @@ RUN apt-get update -y \
   && (curl http://tomobox.fr/js185-1.0.0.tar.gz | tar zxf -) \
   && (cd js-1.8.5 && curl http://tomobox.fr/libmozjs185-grsec.patch | patch -p1 && cd js/src && ./configure --prefix=/usr && make && make install) \
   && curl -ssL https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb -o esl.deb && dpkg -i esl.deb && apt-get update \
-  && apt-get install -y --no-install-recommends erlang-nox=1:17.4 erlang-dev=1:17.4 \
+  && apt-get install -y --no-install-recommends erlang-nox=1:17.5 erlang-dev=1:17.5 \
   && curl -sSL http://apache.openmirror.de/couchdb/source/$COUCHDB_VERSION/apache-couchdb-$COUCHDB_VERSION.tar.gz -o couchdb.tar.gz \
   && curl -sSL https://www.apache.org/dist/couchdb/source/$COUCHDB_VERSION/apache-couchdb-$COUCHDB_VERSION.tar.gz.asc -o couchdb.tar.gz.asc \
   && curl -sSL https://www.apache.org/dist/couchdb/KEYS -o KEYS \
