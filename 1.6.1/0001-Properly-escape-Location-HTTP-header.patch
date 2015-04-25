@@ -1,0 +1,37 @@
+From 2abcd018de7dc6268755ef30d6d884dc29817749 Mon Sep 17 00:00:00 2001
+From: Samuel Tardieu <sam@rfc1149.net>
+Date: Sun, 26 Apr 2015 00:10:04 +0200
+Subject: [PATCH] Properly escape Location: HTTP header
+Bcc: sam@rfc1149.net
+
+---
+ src/couchdb/couch_httpd_db.erl | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/couchdb/couch_httpd_db.erl b/src/couchdb/couch_httpd_db.erl
+index 5691007..dcacccf 100644
+--- a/src/couchdb/couch_httpd_db.erl
++++ b/src/couchdb/couch_httpd_db.erl
+@@ -716,7 +716,7 @@ update_doc_result_to_json(DocId, Error) ->
+ 
+ 
+ update_doc(Req, Db, DocId, #doc{deleted=false}=Doc) ->
+-    Loc = absolute_uri(Req, "/" ++ ?b2l(Db#db.name) ++ "/" ++ ?b2l(DocId)),
++    Loc = absolute_uri(Req, "/" ++ ?b2l(Db#db.name) ++ "/" ++ couch_util:url_encode(DocId)),
+     update_doc(Req, Db, DocId, Doc, [{"Location", Loc}]);
+ update_doc(Req, Db, DocId, Doc) ->
+     update_doc(Req, Db, DocId, Doc, []).
+@@ -1015,8 +1015,8 @@ db_attachment_req(#httpd{method=Method,mochi_req=MochiReq}=Req, Db, DocId, FileN
+     _ ->
+         [{"Location", absolute_uri(Req, "/" ++
+             ?b2l(Db#db.name) ++ "/" ++
+-            ?b2l(DocId) ++ "/" ++
+-            ?b2l(FileName)
++            couch_util:url_encode(DocId) ++ "/" ++
++            couch_util:url_encode(FileName)
+         )}]
+     end,
+     update_doc(Req, Db, DocId, DocEdited, Headers);
+-- 
+2.3.6
+
