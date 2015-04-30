@@ -52,8 +52,7 @@ RUN chown -R couchdb:couchdb \
     /usr/local/var/lib/couchdb /usr/local/var/log/couchdb /usr/local/var/run/couchdb \
   && chmod -R g+rw \
     /usr/local/lib/couchdb /usr/local/etc/couchdb \
-    /usr/local/var/lib/couchdb /usr/local/var/log/couchdb /usr/local/var/run/couchdb \
-  && mkdir -p /var/lib/couchdb
+    /usr/local/var/lib/couchdb /usr/local/var/log/couchdb /usr/local/var/run/couchdb
 
 # Expose to the outside
 RUN sed -e 's/^bind_address = .*$/bind_address = 0.0.0.0/' -i /usr/local/etc/couchdb/default.ini
@@ -64,7 +63,7 @@ COPY ./docker-entrypoint.sh /entrypoint.sh
 VOLUME ["/usr/local/var/log/couchdb", "/usr/local/var/lib/couchdb"]
 
 EXPOSE 5984
-WORKDIR /var/lib/couchdb
+WORKDIR /usr/local/var/lib/couchdb
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["couchdb"]
