@@ -55,7 +55,7 @@ RUN chown -R couchdb:couchdb \
     /usr/local/var/lib/couchdb /usr/local/var/log/couchdb /usr/local/var/run/couchdb
 
 # Expose to the outside
-RUN sed -e 's/^bind_address = .*$/bind_address = 0.0.0.0/' -i /usr/local/etc/couchdb/default.ini
+ADD global-bind-address.ini /usr/local/etc/couchdb/default.d/
 
 COPY ./docker-entrypoint.sh /entrypoint.sh
 
