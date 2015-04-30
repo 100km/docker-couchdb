@@ -17,7 +17,7 @@ if [ "$1" = 'couchdb' ]; then
 
   chmod 664 /usr/local/etc/couchdb/*.ini
   chmod 775 /usr/local/etc/couchdb/*.d
-  HOME=/var/lib/couchdb exec gosu couchdb "$@"
+  HOME=/usr/local/var/lib/couchdb exec gosu couchdb "$@"
 fi
 
 exec "$@"
