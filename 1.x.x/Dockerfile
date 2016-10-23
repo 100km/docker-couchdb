@@ -63,3 +63,6 @@ WORKDIR /usr/local/var/lib/couchdb
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["couchdb"]
+
+# Health check (up to 3 times, every 30s)
+HEALTHCHECK --timeout=3s CMD curl -f http://localhost:5984/ || exit 1
