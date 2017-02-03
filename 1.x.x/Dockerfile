@@ -53,6 +53,7 @@ RUN chown -R couchdb:couchdb \
 # Expose to the outside
 ADD global-bind-address.ini /usr/local/etc/couchdb/default.d/
 
+# Create an entry point
 COPY ./docker-entrypoint.sh /entrypoint.sh
 
 # Define mountable directories.
